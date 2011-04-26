@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BASE=$(basename $1 .s)
+
+as $1 -o $BASE.o
+ld $BASE.o -o $BASE
+chmod +x $BASE
+./$BASE
+echo $?
+rm $BASE
+rm $BASE.o

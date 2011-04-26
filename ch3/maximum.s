@@ -15,11 +15,14 @@
 
 .section .data
 
+# Notice no .globl required, because data_items is
+# local to this file
 data_items:
  .long 3,67,34,222,45,75,54,34,44,33,22,11,66,0
 
 .section .text
 
+# .globl required here to tell linux where to start
 .globl _start
 _start:
  movl $0, %edi                      # Move 0 into index register
