@@ -8,13 +8,12 @@
 
 .globl _start
 _start:
-pushl $3                # Push second argument
-pushl $2                # Push first argument
+pushl $0                # Push power (2nd arg)
+pushl $2                # Push base (1st arg)
 call power
 addl $8, %esp           # Move the stack pointer back
 
-pushl %eax              # Save first answer before calling
-                        # next function
+pushl %eax              # Save first answer before calling next function
 
 push $2
 push $5
@@ -28,14 +27,28 @@ addl %eax, %ebx         # Add them together; the result is in %ebx
 movl $1, %eax           # exit (%ebx is returned)
 int $0x80
 
-.type power, @function
+# INPUT: 1st arg = base number
+#        2nd arg = power to raise it to
+# OUTPUT: the result
+# VARIABLES:
+#   %ebx - base number
+#   %ecx - power
+#   -4(%ebp) - current result
+#   %eax = temporary storage
+#
+.type power, @function  # This tells the linker that the symbol power is a function
 power:
   pushl %ebp            # save old base pointer
   movl %esp, %ebp       # make stack pointer the base pointer
   subl $4, %esp         # get room for our local storage
 
-  movl 8(%ebp), %ebx    # put 1st argument in %eax
-  movl 12(%ebp), %ecx   # put 2nd argument in %ecx
+  movl 8(%ebp), %ebx    # put base in %ebx
+  movl 12(%ebp), %ecx   # put power in %ecx
+
+  movl $1, -4(%ebp)     # In case power is 0
+  cmpl $0, %ecx         # if power is 0, return 1
+  je end_power
+
   movl %ebx, -4(%ebp)   # store current result
 
 power_loop_start:
