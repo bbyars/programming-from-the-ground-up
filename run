@@ -5,7 +5,7 @@ BASE=$(basename $1 .s)
 as $1 -o $BASE.o
 ld $BASE.o -o $BASE
 chmod +x $BASE
-./$BASE
+./$BASE ${@:2}
 echo $?
 rm $BASE
 rm $BASE.o
